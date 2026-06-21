@@ -1,0 +1,19 @@
+services:
+  hotspot-to-socks:
+    build: .
+    image: hotspot-to-socks
+    container_name: hotspot-to-socks
+    # WiFi hardware (nl80211) and the policy routing/iptables setup require the
+    # host network namespace. This also means PROXY=...127.0.0.1... reaches a
+    # proxy bound to localhost on the host.
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    # If hostapd/iptables/sysctl still complain about permissions on your
+    # kernel, replace cap_add above with:  privileged: true
+    env_file:
+      - .env
+    restart: unless-stopped
